@@ -29,7 +29,7 @@ Then, if you have the **original** image (and the **encryption key** if the file
 ### Install Requirements
 
 ```bash
-pip3 install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 

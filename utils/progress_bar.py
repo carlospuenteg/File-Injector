@@ -1,4 +1,4 @@
-from utils.ctxt import *
+from colorama import Fore, init; init()
 
 def progress_bar(percent:float, text:str="", bar_len:int=30) -> None:
     SYMBOL = "━"
@@ -6,6 +6,7 @@ def progress_bar(percent:float, text:str="", bar_len:int=30) -> None:
     done_len = round(percent*bar_len)
     left_len = bar_len - done_len
 
-    print(f"   {ctxt(text,Fore.MAGENTA)} {ctxt(SYMBOL*done_len,Fore.GREEN)}{SYMBOL*left_len} {f'[{percent_done}%]'.ljust(8)}", end='\r')
+    print(f"   {Fore.MAGENTA}{text}{Fore.RESET} {Fore.GREEN}{SYMBOL*done_len}{Fore.RESET}{SYMBOL*left_len} {f'[{percent_done}%]'.ljust(8)}", end='\r')
+    
     if percent == 1: 
         print("✅")
