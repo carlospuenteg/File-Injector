@@ -15,7 +15,7 @@
 
 ## Description
 
-File Inyector is a script that allows you to **store any file** (`.zip`, `.png`, `.txt`, `.gba`...) and its **filename** in an **image** using [steganography](https://en.wikipedia.org/wiki/Steganography). 
+File Injector is a script that allows you to **store any file** (`.zip`, `.png`, `.txt`, `.gba`...) and its **filename** in an **image** using [steganography](https://en.wikipedia.org/wiki/Steganography). 
 
 You can also choose to **encrypt** the stored file.
 
