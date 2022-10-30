@@ -1,30 +1,45 @@
 # File Injector
 
+#### If you want to use a previous version (1.0.2 or lower), where you needed the original image to extract the file, you can download it [here](https://github.com/carlospuenteg/File-Injector/archive/refs/tags/v1.0.2.zip).
+
 ## Index
-* [Description](#description)
-* [Getting Started](#getting-started)
+* [1. Description](#1-description)
+* [2. Getting Started](#2-getting-started)
   * [Install requirements](#install-requirements)
-  * [Store an image](#store-an-image)
   * [Run the script](#run-the-script)
-* [Results](#results)
-* [Configuration](#configuration)
-* [How it works](#how-it-works)
-  * [Added/Subtracted bpp (bits per pixel)](#addedsubtracted-bpp-bits-per-pixel)
-  * [Bit storing](#bit-storing)
-  * [Process](#process)
+  * [Choose input](#choose-input)
+    * [Choose a base image](#choose-a-base-image)
+    * [Choose an input file](#choose-an-input-file)
+    * [Choose/Generate an encryption key](#choosegenerate-an-encryption-key)
+* [3. Results](#3-results)
+* [4. Examples of use](#4-examples-of-use)
+  * [Injection](#injection)
+  * [Extraction](#extraction)
+* [5. Configuration](#5-configuration)
+* [6. What it does](#6-what-it-does)
+* [7. How it works](#7-how-it-works)
+  * [Options](#options)
+  * [inject_file_func](#inject_file_func)
+  * [extract_file_func](#extract_file_func)
+  * [get_fernet](#get_fernet)
+  * [decrypt_content](#decrypt_content)
+  * [inject_file](#inject_file)
+  * [extract_file](#extract_file)
 
-## Description
-
-File Injector is a script that allows you to **store any file** (`.zip`, `.png`, `.txt`, `.gba`...) and its **filename** in an **image** using [steganography](https://en.wikipedia.org/wiki/Steganography). 
-
-You can also choose to **encrypt** the stored file.
-
-Then, if you have the **original** image (and the **encryption key** if the file has been encrypted), you can **extract the file** from it.
 
 
+## 1. Description
+
+File Injector is a script that allows you to **store any file** (`.zip`, `.png`, `.txt`, `.gba`...) and its **filename** in an **image** as **noise**, using [steganography](https://en.wikipedia.org/wiki/Steganography).
+
+You can also choose to **encrypt** the input file before storing it.
+
+Then, to **extract** the file from the modified image, you **DON'T need the original image**, just the **encryption key** if the file has been encrypted.
 
 
-## Getting Started
+
+
+## 2. Getting Started
 
 ### Install Requirements
 
@@ -44,179 +59,213 @@ python3 main.py
 
 #### Choose a base image
 
-Choose a base image for storing/retrieving the file from the `files/base-images` folder.
+**Choose** a base image for storing/retrieving the file from the `files/base-images` folder.
 
-You can add your own images to this folder. They can be `.png` or `.jpg`, but they will be converted to `.png` when the script is run.
+You can add your **own** images to this folder. They can be `.png` or (`.jpg`/`.jpeg`), but they will be converted to `.png` when the script is run.
 
 
-#### Choose a file
+#### Choose an input file
 
-Choose a file to be stored in the image from the `files/input-files` folder.
+**Choose** a file to be stored in the image from the `files/input-files` folder.
 
-You can add your own files to this folder. It can be any file type.
+You can add your **own** files to this folder. It can be any file type.
 
 
 #### Choose/Generate an encryption key
 
-You can choose a key from the `files/$encryption-keys` folder or generate one there.
-
-In that folder, can store an encryption key (that you or other user has generated with this script)
+You can **choose** a key from the `files/$encryption-keys` folder or **generate** one there.
 
 The key file must have the `.key` extension
 
-But you don't need to choose a particular one when decrypting a file, it will be selected automatically from the folder.
-
-
-### Examples of use
-
-#### Encryption
-
-<img src=readme-assets/example_encryption.png width=400>
-
-#### Decryption
-
-<img src=readme-assets/example_decryption.png width=400>
+You don't need to choose a particular one when decrypting a file, it will be selected automatically from the folder.
 
 
 
+## 3. Results
 
-## Results
+This **17.1MP** image contains a **9MB** `.zip` file, and its **filename** stored in the noise.
 
-#### Comparison between the original and the modified image
-
-The bigger the image, the more difficult it is to notice the difference (the difficulty grows exponentially, since with more pixels you can store more data and it is more difficult to notice the noise when zoomed out). This one is 17.1MP.
-
-| Original | Modified |
-|-|-|
-| <img src=readme-assets/base_img.png width=400> | <img src=readme-assets/mod_img.png width=400> |
+<img src="readme-assets/17'1MP_mod.png" width=500>
 
 
 
+## 4. Examples of use
+
+### Injection
+
+```text
+... File-Injector % python3 main.py
+[0] EXIT
+[1] Inject file
+[2] Extract file
+
+Option: 1
+File to be stored: images.zip
+Filename of the base image: 2'2MP
+Encrypt the file? (y/n): y
+
+Do you want to use an existing key or generate a new one?
+[0] Existing key
+[1] New key
+
+Option: 1
+Filename of the new key file (blank for default): 
+Key generated and saved to files/$encryption-keys/key9.key
+
+Preparing...
+
+Modified bits per channel: 2
+Image modification: 25.0%
+
+✅ Storing... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [100.0%]
+
+Generating random values...
+
+Storing random values...
+
+Reshaping...
+
+Modified image saved in files/modified-images/2'2MP_mod.png
+
+Done in 7.5892 seconds
+```
+
+### Extraction
+
+```
+... File-Injector % python3 main.py
+[0] EXIT
+[1] Inject file
+[2] Extract file
+
+Option: 2
+Filename of the modified image: 2'2MP_mod
+
+Preparing...
+
+Retrieving filename...
+
+Retrieving input file...
+Decrypted with "files/$encryption-keys/key2.key"
+
+Output file saved in files/output-files/images.zip
+
+Done in 1.4083 seconds
+```
 
 
-## Configuration
+
+## 5. [Configuration](config.py)
 
 You can change the configuration in the [config.py](config.py) file.
 
 | Constant | Description | Default value |
 |-|-|-|
-| `MOD_PREFIX` | Prefix the modified image will have | `"mod_"` |
+| `MOD_PREFIX` | Prefix the modified image will have | `""` |
 | `MOD_SUFFIX` | Suffix the modified image will have | `"_mod"` |
 | `STORE_RANDOM` | Store random data in the modified image so that the limit between the part with the stored data and the part without is not so obvious | `True` |
-| `TEST_MODE` | Enables/Disables Test Mode (test with predefined images and files) | `True` |
+| `TEST_MODE` | Enables/Disables Test Mode: Test with predefined images and files | `True` |
 
 
 
 
-## How it works
+## 6. What it does
 
-### Added/Subtracted bpp (bits per pixel)
-When you are storing a file, `Added/Subtracted bpp (bits per pixel): n` will appear on your terminal.
+The **injection** is done by **storing** the information in the **X less significant bits** of the image's **channels**
+- Each channel (R, G and B) has **8 bits**, and this script changes from **1 to 4** bits of each channel, depending on the **size** of the file to be stored.
+- If you store a bigger file, **more bits** will be changed and the changes will be **more noticeable**.
+- If you store a smaller file, **less bits** will be changed and the changes will be **less noticeable**.
+- If you choose to **encrypt the file**, its **size will increase by ≈1/3**.
 
-These are the number of bits that will be added or subtracted to/from each pixel of the image. Divide it by 3 to get the number of bits that will be added or subtracted to/from each color channel of the pixel.
-
-`n` can be `3, 6, 12, 24, 48`, depending on the size of the file compared with the number of pixels of the base image.
-
-The **bigger the image** and the **smaller the file**, the less `n` will be and the **better** the final result will be.
-
-If the file is too big in comparison with the image, the error: `Image is too small to store the file` will appear.
-
-
-### Bit storing
-
-- **N**: Bits that we want to add
-- **V**: Value of the channel (0-255)
-  
-If `N + V <= 255`: `V = 255 + N`
-Else: `V = V - C`
+| Changed bits | ≈Image size (MP) | ≈Max file size (MB)  |
+| :-: | :-: | :-: |
+| 1 | 1 | 0.375 |
+| 2 | 1 | 0.5 |
+| 3 | 1 | 0.75 |
+| 4 | 1 | 1.5 |
 
 
-### Process
-
-#### `main.py`
-
-1. Creates the 5 folders within the `files`folder if they don't exist.
-2. Converts all the non-png images within the `base-images`folder to `.png`
-3. Runs the [menu](#menu-in-menupy) function
 
 
-#### `menu()` (in [menu.py](menu.py))
+## 7. How it works
 
-1. Asks the user to choose an option from the menu
-   - [0] EXIT
-   - [1] [Store file](#store_file_func-in-menupymenupy)
-   - [2] [Retrieve file](#retrieve_file_func-in-menupymenupy)
+### Options
 
-
-#### `store_file_func` (in [menu.py](menu.py))
-
-1. If you aren't in **TEST_MODE**, you will be asked to:
-   - Choose a file to be stored from the `files/input-files` folder.
-   - Choose a base image from the `files/base-images` folder.
-2. The input file is read in binary mode and stored in a variable, as well as its filename
-3. The image is read with the `PIL` library and stored in a numpy array
-4. If you choose to **encrypt the file**:
-   - You will be asked to either choose an encryption key from the `files/$encryption-keys` folder or generate a new one and store it there.
-   - If you choose to generate a new one, it will be generated and stored in the `files/$encryption-keys` folder
-   - The encryption key is loaded and used to encrypt the file and filename
-5. The input and the filename are converted to hexadecimal
-6. [store_file()](#store_file-in-noise_storerpynoise_storerpy) is called:
-   - Parameters: Hexadecimal input, hexadecimal filename, Image array
-   - Returns: Modified image array
-7.  Saves the modified image array in the `files/modified-images` folder
+| Option | Description |
+|-|-|
+| [0] EXIT | Exit the script |
+| [1] Inject file | Calls [`inject_file_func()`](#inject_file_func) |
+| [2] Extract file | Calls `extract_file_func()` |
 
 
-#### `retrieve_file_func()` (in [menu.py](menu.py))
+### [`inject_file_func()`](menu.py)
 
-1. If you aren't in **TEST_MODE**, you will be asked to:
-   - Choose a base image from the `files/base-images` folder.
-   - Choose a modified image from the `files/modified-images` folder.
-2. The input images are read with the `PIL` library, then converted to a numpy array, then flattened and then converted to **int8**
-3. [retrieve_file()](#retrieve_file-in-noise_storerpynoise_storerpy) is called:
-   - Parameters: Base image array (flattened, int8), Modified image array (flattened, int8)
-   - Returns:, File content in bytes, Filename in UTF-8
-4. If the text starts with `gAAAAA`, it means that it is encrypted and it will be decrypted with [decrypt_content()](#decrypt_content-in-utilscryptographypyutilscryptographypy)
-5. The output file content is saved in the `files/output-files` folder, with the filename that was retrieved
-
-
-#### `store_file()` (in [noise_storer.py](noise_storer.py))
-- Parameters: Hexadecimal input, hexadecimal filename, Image array
-- Returns: Modified image array
-1. Save a flattened image array in a variable
-2. Calculate the base (= maximum added/subtracted bits to each pixel + 1):
-   - Calculate the number of available pixels by subtracting from the length of the flattened image array:
-     - 1 (for storing the base of the image)
-     - Maximum size that the filename can have (when converted to binary)
-   - Calculate `div` (number of times the hex input is bigger than the number of available pixels) by dividing the avaliblable pixels by the length of the hexadecimal input 
-     - `div == 0`:
-     - `div >= 4`: base = 2
-     - `div >= 3`: base = 4
-     - `div >= 2`: base = 8
-     - `div >= 1`: base = 16
-     - else: raises exception: "Image is too small to store the file"
-3. Change the base of the hexadecimal input and the filename to the obtained base
-4. [Store](#bit-storing) `base-1` on the first pixel
-5. [Store](#bit-storing) the hexadecimal filename on the next pixels
-6. [Store](#bit-storing) a divider (the base)
-7. [Store](#bit-storing) the hexadecimal input
-8. [Store](#bit-storing) a divider (the base)
-9. [Store](#bit-storing) random data on the remaining pixels
-10. Reshape the flattened image array to the original shape of the image
+1. If `TEST_MODE` == `True`, it will use the predefined base image and file. Otherwise, it will ask for the input file and the base image.
+2. Read the file
+3. Read the image and store it in a numpy array
+4. If the user wants to encrypt the file:
+   1. Get the key with [`get_fernet()`](#get_fernet)
+   2. Encrypt the file and filename
+5. Convert the file and filename to hexadecimal
+6. Try to inject the hexadecimal file and filename in the image with [`inject_file()`](#inject_file). 
+   1. If the image is too small to store the file, raise an error
+   2. Else, return the modified image.
+7. Save the modified image
 
 
-#### `retrieve_file()` (in [noise_storer.py](noise_storer.py))
- - Parameters: Base image array (flattened, int8), Modified image array (flattened, int8)
- - Returns:, File content in bytes, Filename in UTF-8
-1. Get `diff`: Numpy array created by subtracting the base image array from the modified image array
-2. Calculate the **base** = `diff[0] + 1`
-3. Find the dividers (the base) from the `diff` array
-4. Get the filename and the input file's content from the `diff` array and convert them to hexadecimal
-5. Convert the hexadecimal filename to bytes and then to UTF-8
-6. Convert the hexadecimal input content to bytes
-7. Return the filename in UTF-8 and the input content in bytes
+### [`extract_file_func()`](menu.py)
+
+1. If `TEST_MODE` == `True`, it will use the predefined modified image. Otherwise, it will ask for the modified image.
+2. Flatten the modified image
+3. Extract the hexadecimal file and filename with [`extract_file()`](#extract_file)
+4. If the file and filename have been encrypted (they start with `gAAAAA`), decrypt them with [`decrypt_content`](#decrypt_content)
+5. Decode the filename to **UTF-8**
+6. Save the file with the decoded filename
 
 
-#### `decrypt_content()` (in [utils.cryptography.py](utils/cryptography.py))
+### [`get_fernet()`](utils/cryptography.py)
 
-1. Try to decrypt the content with every key in the `files/$encryption-keys` folder
-2. If the decryption is successful, return the decrypted file content and filename, else raise an exception
+| Option | Description |
+|-|-|
+| [0] Existing key | Use an existing key |
+| [1] New key | Generate a new key |
+
+[0] Existing key
+1. Choose a key to use from the `files/$encryption-keys` folder
+
+[1] New key
+1. Choose a filename for the new key (or leave it blank for the default one (e.g. **key8.key**))
+2. Generate a new key and save it with the chosen filename
+3. Return the Fernet object with the new key
+
+
+### [`decrypt_content()`](utils/cryptography.py)
+
+1. For each key in the `files/$encryption-keys` folder:
+   1. Try to decrypt the file and filename with it
+   2. If **InvalidToken** is raised:
+      1. It means that the key is not the right one
+      2. Try with other key
+   3. Else, return the key
+2. If no key is found, raise an Exception
+
+
+### [`inject_file()`](utils/injection.py)
+
+| Parameter | Type | Description |
+|-|-|-|
+| `img_arr` | `np.ndarray` | Image as a numpy array |
+| `file` | `str` | File in hexadecimal |
+| `filename` | `str` | Filename in hexadecimal |
+| `store_random` | `boolean` | Whether or not to store random data in the modified image |
+
+returns the **modified image array** (not flattened `np.ndarray`)
+
+
+### [`extract_file()`](utils/injection.py)
+
+| Parameter | Type | Description |
+|-|-|-|
+| `mod_img_arr_flat` | `np.ndarray` | Flattened modified image |
+
+returns a **dictionary** with the extracted **file** and **filename**, both in (`bytes`) format

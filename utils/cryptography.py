@@ -1,13 +1,16 @@
 import os
-from pathlib import Path
 import re
+from pathlib import Path
+
 from cryptography.fernet import Fernet, InvalidToken
 
-from utils.ctxt import *
-from utils.input import get_path, get_valid_filename
 from constants.constants import ENCRYPTION_KEYS_PATH
 from classes.Options import Options
+from utils.ctxt import *
+from utils.input import get_path, get_valid_filename
 
+
+# Generate a key with Fernet.generate_key(), save it to a file and return the path
 def gen_key(new_filename=None) -> str:
     key = Fernet.generate_key()
 
@@ -31,6 +34,7 @@ def gen_key(new_filename=None) -> str:
 
 
 
+# Load the key from the path
 def load_key(path) -> bytes:
     stem = Path(path).stem
 
@@ -41,13 +45,12 @@ def load_key(path) -> bytes:
 
 
 
-
+# Choose or generate a key from a menu, validate it and return the Fernet object
 def get_fernet() -> Fernet:
     print("\nDo you want to use an existing key or generate a new one?")
     option = Options(["Existing key", "New key"]).get_choice()
     
     if option == 0:
-        # Filename of the key file (the input can be empty)
         key_path = get_path(ENCRYPTION_KEYS_PATH, "Filename of the key file: ", [".key"])
 
     if option == 1:
@@ -58,7 +61,7 @@ def get_fernet() -> Fernet:
 
 
 
-
+# Choose the path of the key file and return the Fernet object
 def choose_fernet() -> Fernet:
     key_path = get_path(ENCRYPTION_KEYS_PATH, "\nFilename of the key file: ", [".key"])
 
@@ -66,7 +69,7 @@ def choose_fernet() -> Fernet:
 
 
 
-
+# Return a list of all the paths of the key files
 def get_key_paths() -> list:
     keys_paths = []
     for file in os.listdir(ENCRYPTION_KEYS_PATH):
@@ -76,23 +79,20 @@ def get_key_paths() -> list:
 
 
 
-
-def decrypt_content(file_content, filename)  -> dict:
-    was_successful = False
+# Decrypt the content of the file and filename trying with all the key files
+def decrypt_content(file, filename)  -> dict:
     for key_path in get_key_paths():
         fernet = Fernet(load_key(key_path))
         try:
-            file_content = fernet.decrypt(file_content)
-            filename = fernet.decrypt(filename.encode()).decode()
+            file = fernet.decrypt(file)
+            filename = fernet.decrypt(filename)
             print(ctxt(f'Decrypted with "{key_path}"', Fore.GREEN))
-            was_successful = True
-            break
+            return {
+                "file": file,
+                "filename": filename
+            }
         except InvalidToken:
             continue
-    if not was_successful:
-        raise Exception(f'Decryption key for the file not found in "{ENCRYPTION_KEYS_PATH}"')
 
-    return {
-        "file_content": file_content,
-        "filename": filename
-    }
+    # If the file couldn't be decrypted with any key, raise an Exception
+    raise Exception(f'Decryption key for the file not found in "{ENCRYPTION_KEYS_PATH}"')

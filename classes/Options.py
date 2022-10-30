@@ -1,6 +1,4 @@
-from colorama import Fore, init; init()
-
-from utils.ctxt import ctxt
+from utils.ctxt import *
 
 class Options:
     def __init__(self, options:list, first_idx:int=0):

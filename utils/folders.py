@@ -1,15 +1,16 @@
 import os
 from pathlib import Path
 
-from utils.ctxt import *
 from constants.constants import IMAGE_EXTS
+from utils.ctxt import *
 
+# Create folders if they don't exist
 def create_folders(*args) -> None:
     folders = args
 
     for folder in folders:
-        if not os.path.isdir(folder):
-            os.makedirs(folder, exist_ok=True)
+        # Create folder if it doesn't exist
+        os.makedirs(folder, exist_ok=True)
 
 
 def folder2png(folder) -> None:
