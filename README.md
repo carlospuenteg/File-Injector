@@ -115,7 +115,7 @@ Key generated and saved to files/$encryption-keys/key9.key
 Preparing...
 
 Modified bits per channel: 2
-Image modification: 25.0%
+Image modification: 1.56%
 
 ✅ Storing... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [100.0%]
 
