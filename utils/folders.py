@@ -5,7 +5,7 @@ from constants.constants import IMAGE_EXTS
 from utils.ctxt import *
 
 # Create folders if they don't exist
-def create_folders(*args) -> None:
+def create_folders(*args:str) -> None:
     folders = args
 
     for folder in folders:
@@ -13,7 +13,7 @@ def create_folders(*args) -> None:
         os.makedirs(folder, exist_ok=True)
 
 
-def folder2png(folder) -> None:
+def folder2png(folder:str) -> None:
     for file in os.listdir(folder):
         ext = Path(file).suffix
         stem = Path(file).stem

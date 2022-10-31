@@ -11,7 +11,7 @@ from utils.input import get_path, get_valid_filename
 
 
 # Generate a key with Fernet.generate_key(), save it to a file and return the path
-def gen_key(new_filename=None) -> str:
+def gen_key(new_filename:str=None) -> str:
     key = Fernet.generate_key()
 
     if new_filename:
@@ -35,7 +35,7 @@ def gen_key(new_filename=None) -> str:
 
 
 # Load the key from the path
-def load_key(path) -> bytes:
+def load_key(path:str) -> bytes:
     stem = Path(path).stem
 
     with open(path, 'rb') as f:
@@ -80,7 +80,7 @@ def get_key_paths() -> list:
 
 
 # Decrypt the content of the file and filename trying with all the key files
-def decrypt_content(file, filename)  -> dict:
+def decrypt_content(file:bytes, filename:bytes)  -> dict:
     for key_path in get_key_paths():
         fernet = Fernet(load_key(key_path))
         try:

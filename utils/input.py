@@ -1,12 +1,13 @@
 import os
 from pathlib import Path
+from xmlrpc.client import boolean
 
 from utils.ctxt import *
 
 def check_path(path:str) -> bool:
     return os.path.isfile(path)
 
-def get_valid_filename(msg:str, exts:list=None, allow_blank=False) -> str:
+def get_valid_filename(msg:str, exts:list=None, allow_blank:bool=False) -> str:
     while True:
         filename = input(msg).strip()
         ext = Path(filename).suffix

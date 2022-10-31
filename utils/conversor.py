@@ -18,7 +18,7 @@ def h2b(hex:str)-> bytes:
 
 
 # Convert a number to an array of numbers
-def numberToArr(n, base) -> list:
+def numberToArr(n:int, base:int) -> list:
     if n == 0: return [0]
     digits = []
     while n:
@@ -28,7 +28,7 @@ def numberToArr(n, base) -> list:
 
 
 # Convert from base 10 to base 4
-def quat(n) -> int:
+def quat(n:int) -> int:
     b = bin(n)[2:]
 
     if len(b) % 2 != 0:
@@ -41,7 +41,7 @@ def quat(n) -> int:
     return quaternary_n
 
 # Convert from int to base 2,4,8 or 16
-def conv(x, base):
+def conv(x:int, base:int) -> str:
     if base == 2:
         return bin(x)[2:]
     elif base == 4:
