@@ -46,6 +46,10 @@ Then, to **extract** the file from the modified image, you **DON'T need the orig
 ```bash
 python3 -m pip install -r requirements.txt
 ```
+If that doesn't work, you can try:
+```bash
+py -m pip install -r requirements.txt
+```
 
 
 ### Run the script
