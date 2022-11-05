@@ -87,9 +87,13 @@ You don't need to choose a particular one when decrypting a file, it will be sel
 
 ## 3. Results
 
-This **17.1MP** image contains a **9MB** `.zip` file, and its **filename** stored in the noise.
-
 <img src="readme-assets/17'1MP_mod.png" width=500>
+
+This **17.1MP** image contains an **encrypted** **9MB** `.zip` file and its **filename** stored in the noise.
+
+<img src="readme-assets/1'7MP_mod.png" width=500>
+
+This **1.7MP** image contains an **encrypted** **0.93MB** `.zip` file and its **filename** stored in the noise.
 
 
 

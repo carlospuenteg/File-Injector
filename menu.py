@@ -31,7 +31,7 @@ def inject_file_func() -> None:
     # Get the inputs
     if TEST_MODE:
         file_path = f"{INPUT_FILES_PATH}/images.zip"
-        img_path = f"{BASE_IMAGES_PATH}/2'2MP.png"
+        img_path = f"{BASE_IMAGES_PATH}/1'7MP.png"
     else:
         file_path = get_path(INPUT_FILES_PATH, "File to be stored: ")
         img_path = get_path(BASE_IMAGES_PATH, "Filename of the base image: ", IMAGE_EXTS)
@@ -75,7 +75,7 @@ def inject_file_func() -> None:
 
 def extract_file_func() -> None:
     if TEST_MODE:
-        mod_img_path = f"{MOD_IMAGES_PATH}/2'2MP_mod.png"
+        mod_img_path = f"{MOD_IMAGES_PATH}/1'7MP_mod.png"
     else:
         mod_img_path = get_path(MOD_IMAGES_PATH, "Filename of the modified image: ", IMAGE_EXTS)
 
