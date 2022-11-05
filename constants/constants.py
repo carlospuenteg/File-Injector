@@ -10,7 +10,7 @@ IMAGE_EXTS = [".png", ".jpg", ".jpeg"]
 
 # Maximum filename size
 MAX_FN_SIZE = 256 # In bytes
-MAX_FN_SIZE_BIN = MAX_FN_SIZE * 4 # In bits
+MAX_FN_SIZE_BIN = MAX_FN_SIZE * 8 # In bits
 
 # Max base exponent
 MAX_BASE_EXP = 4 # 2^4 = 16
