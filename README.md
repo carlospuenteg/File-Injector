@@ -8,7 +8,7 @@
   * [Install requirements](#install-requirements)
   * [Run the script](#run-the-script)
   * [Choose input](#choose-input)
-    * [Choose a base image/audio](#choose-a-base-imageaudio)
+    * [Choose a base image](#choose-a-base-image)
     * [Choose an input file](#choose-an-input-file)
     * [Choose/Generate an encryption key](#choosegenerate-an-encryption-key)
 * [3. Results](#3-results)
@@ -61,18 +61,16 @@ python3 main.py
 
 ### Choose input
 
-#### Choose a base image/audio
+#### Choose a base image
 
-**Choose** a base image/audio for storing/retrieving the file from the `files/base-images` or the `files/base-audios` folder.
+**Choose** a base image for storing/retrieving the file from the `files/base-images` folder.
 
-You can add your **own** images/audios to this folder. 
-- The images can be `.png` or (`.jpg`/`.jpeg`), but they will be converted to `.png` when the script is run.
-- The audios can be `.wav` or `.mp3`
+You can add your **own** images to this folder. They can be `.png` or (`.jpg`/`.jpeg`), but they will be converted to `.png` when the script is run.
 
 
 #### Choose an input file
 
-**Choose** a file to be stored in the image/audio from the `files/input-files` folder.
+**Choose** a file to be stored in the image from the `files/input-files` folder.
 
 You can add your **own** files to this folder. It can be any file type.
 
@@ -172,17 +170,15 @@ You can change the configuration in the [config.py](config.py) file.
 
 | Constant | Description | Default value |
 |-|-|-|
-| `MOD_PREFIX` | Prefix the modified image/audio will have | `""` |
-| `MOD_SUFFIX` | Suffix the modified image/audio will have | `"_mod"` |
+| `MOD_PREFIX` | Prefix the modified image will have | `""` |
+| `MOD_SUFFIX` | Suffix the modified image will have | `"_mod"` |
 | `STORE_RANDOM` | Store random data in the modified image so that the limit between the part with the stored data and the part without is not so obvious | `True` |
-| `TEST_MODE` | Enables/Disables Test Mode: Test with predefined images/audios and files | `True` |
+| `TEST_MODE` | Enables/Disables Test Mode: Test with predefined images and files | `True` |
 
 
 
 
 ## 6. What it does
-
-### Inject into image
 
 The **injection** is done by **storing** the information in the **X less significant bits** of the image's **channels**
 - Each channel (R, G and B) has **8 bits**, and this script changes from **1 to 4** bits of each channel, depending on the **size** of the file to be stored.
@@ -190,17 +186,12 @@ The **injection** is done by **storing** the information in the **X less signifi
 - If you store a smaller file, **less bits** will be changed and the changes will be **less noticeable**.
 - If you choose to **encrypt the file**, its **size will increase by ≈1/3**.
 
-| Changed bits | Image size (MP) | ≈Max file size (MB)  |
+| Changed bits | ≈Image size (MP) | ≈Max file size (MB)  |
 | :-: | :-: | :-: |
 | 1 | 1 | 0.375 |
 | 2 | 1 | 0.5 |
 | 3 | 1 | 0.75 |
 | 4 | 1 | 1.5 |
-
-
-### Inject into audio
-
-...
 
 
 
@@ -213,28 +204,28 @@ The **injection** is done by **storing** the information in the **X less signifi
 |-|-|
 | [0] EXIT | Exit the script |
 | [1] Inject file | Calls [`inject_file_func()`](#inject_file_func) |
-| [2] Extract file | Calls [`extract_file_func()`](#extract_file_func) |
+| [2] Extract file | Calls `extract_file_func()` |
 
 
 ### [`inject_file_func()`](menu.py)
 
-1. If `TEST_MODE` == `True`, it will use the predefined base image/audio and file. Otherwise, it will ask for the input file and the base image/audio.
+1. If `TEST_MODE` == `True`, it will use the predefined base image and file. Otherwise, it will ask for the input file and the base image.
 2. Read the file
-3. Read the image/audio and store it in a numpy array
+3. Read the image and store it in a numpy array
 4. If the user wants to encrypt the file:
    1. Get the key with [`get_fernet()`](#get_fernet)
    2. Encrypt the file and filename
 5. Convert the file and filename to hexadecimal
-6. Try to inject the hexadecimal file and filename in the image/audio with [`inject_file()`](#inject_file). 
-   1. If the image/audio is too small to store the file, raise an error
-   2. Else, return the modified image/audio.
-7. Save the modified image/audio
+6. Try to inject the hexadecimal file and filename in the image with [`inject_file()`](#inject_file). 
+   1. If the image is too small to store the file, raise an error
+   2. Else, return the modified image.
+7. Save the modified image
 
 
 ### [`extract_file_func()`](menu.py)
 
-1. If `TEST_MODE` == `True`, it will use the predefined modified image/audio. Otherwise, it will ask for the modified image/audio.
-2. Flatten the modified image/audio
+1. If `TEST_MODE` == `True`, it will use the predefined modified image. Otherwise, it will ask for the modified image.
+2. Flatten the modified image
 3. Extract the hexadecimal file and filename with [`extract_file()`](#extract_file)
 4. If the file and filename have been encrypted (they start with `gAAAAA`), decrypt them with [`decrypt_content`](#decrypt_content)
 5. Decode the filename to **UTF-8**
@@ -272,18 +263,18 @@ The **injection** is done by **storing** the information in the **X less signifi
 
 | Parameter | Type | Description |
 |-|-|-|
-| `arr` | `np.ndarray` | Image/audio as a numpy array |
+| `img_arr` | `np.ndarray` | Image as a numpy array |
 | `file` | `str` | File in hexadecimal |
 | `filename` | `str` | Filename in hexadecimal |
-| `store_random` | `boolean` | Whether or not to store random data in the modified image/audio |
+| `store_random` | `boolean` | Whether or not to store random data in the modified image |
 
-returns the **modified image/audio array** (not flattened `np.ndarray`)
+returns the **modified image array** (not flattened `np.ndarray`)
 
 
 ### [`extract_file()`](utils/injection.py)
 
 | Parameter | Type | Description |
 |-|-|-|
-| `mod_arr_flat` | `np.ndarray` | Flattened modified image/audio |
+| `mod_img_arr_flat` | `np.ndarray` | Flattened modified image |
 
 returns a **dictionary** with the extracted **file** and **filename**, both in (`bytes`) format
