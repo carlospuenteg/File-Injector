@@ -186,7 +186,7 @@ The **injection** is done by **storing** the information in the **X less signifi
 - If you store a smaller file, **less bits** will be changed and the changes will be **less noticeable**.
 - If you choose to **encrypt the file**, its **size will increase by ≈1/3**.
 
-| Changed bits | ≈Image size (MP) | ≈Max file size (MB)  |
+| Changed bits | Image size (MP) | ≈Max file size (MB)  |
 | :-: | :-: | :-: |
 | 1 | 1 | 0.375 |
 | 2 | 1 | 0.5 |
@@ -204,7 +204,7 @@ The **injection** is done by **storing** the information in the **X less signifi
 |-|-|
 | [0] EXIT | Exit the script |
 | [1] Inject file | Calls [`inject_file_func()`](#inject_file_func) |
-| [2] Extract file | Calls `extract_file_func()` |
+| [2] Extract file | Calls [`extract_file_func()`](#extract_file_func) |
 
 
 ### [`inject_file_func()`](menu.py)
