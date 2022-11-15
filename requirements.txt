@@ -2,3 +2,5 @@ numpy
 Pillow
 colorama
 cryptography
+numba
+pydub

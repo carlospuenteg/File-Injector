@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-from xmlrpc.client import boolean
+
+import numpy as np
 
 from utils.ctxt import *
 
@@ -35,25 +36,29 @@ def get_valid_filename(msg:str, exts:list=None, allow_blank:bool=False) -> str:
             return filename
 
 
-def get_path(folder_path:str, msg:str, exts:list=None) -> str:
+def get_path(folder_paths:str, msg:str, exts:list=None) -> str:
+    # Concatenate exts lists into a single list
+    if exts and len(exts) > 1:
+        exts = [ext for ext_list in exts for ext in ext_list] if exts else None
     while True:
         filename = input(msg).strip()
-        path = f"{folder_path}/{filename}"
-        ext = Path(path).suffix
-        stem = Path(path).stem
-        if ext:
-            if check_path(path) and (not exts or ext in exts):
-                return path
-        # If the file doesn't have extension or if that file with that extension doesn't exist
-        if exts:
-            for e in exts:
-                path = f"{folder_path}/{stem}{e}"
-                if check_path(path):
+        for folder_path in folder_paths:
+            path = f"{folder_path}/{filename}"
+            ext = Path(path).suffix
+            stem = Path(path).stem
+            if ext:
+                if check_path(path) and (not exts or ext in exts):
                     return path
-        else:
-            for file in os.listdir(folder_path):
-                if stem == Path(file).stem:
-                    return f"{folder_path}/{file}"
+            # If the file doesn't have extension or if that file with that extension doesn't exist
+            if exts:
+                for e in exts:
+                    path = f"{folder_path}/{stem}{e}"
+                    if check_path(path):
+                        return path
+            else:
+                for file in os.listdir(folder_path):
+                    if stem == Path(file).stem and check_path(f"{folder_path}/{file}"):
+                        return f"{folder_path}/{file}"
 
         print(ctxt("Invalid file", Fore.RED))
     

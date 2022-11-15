@@ -51,7 +51,7 @@ def get_fernet() -> Fernet:
     option = Options(["Existing key", "New key"]).get_choice()
     
     if option == 0:
-        key_path = get_path(ENCRYPTION_KEYS_PATH, "Filename of the key file: ", [".key"])
+        key_path = get_path([ENCRYPTION_KEYS_PATH], "Filename of the key file: ", [".key"])
 
     if option == 1:
         key_filename = get_valid_filename("Filename of the new key file (blank for default): ", [".key"], allow_blank=True)
@@ -63,7 +63,7 @@ def get_fernet() -> Fernet:
 
 # Choose the path of the key file and return the Fernet object
 def choose_fernet() -> Fernet:
-    key_path = get_path(ENCRYPTION_KEYS_PATH, "\nFilename of the key file: ", [".key"])
+    key_path = get_path([ENCRYPTION_KEYS_PATH], "\nFilename of the key file: ", [".key"])
 
     return Fernet(load_key(key_path))
 

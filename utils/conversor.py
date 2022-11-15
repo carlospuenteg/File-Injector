@@ -1,31 +1,30 @@
-import binascii
+import math
+
+import numpy as np
 
 from constants.constants import *
 from utils.ctxt import *
 
-# Convert from text to hexadecimal
-def t2h(txt:str) -> str:
-    return txt.encode('utf-8').hex()
+# Get the length a number will have in a given base, given the number of digits of that number in base 2
+def binLen2BaseLen(bin_len:int, base:int) -> int:
+    base_exp = int(math.log(base, 2))
+    return bin_len // base_exp + (bin_len % base_exp != 0)
 
-# Convert from bytes to hexadecimal
-def b2h(txt:bytes) -> str:
-    return str(binascii.hexlify(txt), 'utf-8')
+# Convert from base 2 to array of base X
+def bin2Arr(n:str, base:int) -> list:
+    base_exp = int(math.log(base, 2))
+    # fill n with 0s to the left
+    n = n.zfill(len(n) + (base_exp - len(n) % base_exp) % base_exp)
+    # convert n to array of base
+    n = [int(n[i:i+base_exp], 2) for i in range(0, len(n), base_exp)]
+    return np.array(n)
 
-
-# Convert hexadecimal to bytes (utf-8)
-def h2b(hex:str)-> bytes:
-    return bytes.fromhex(hex).decode('utf-8')
-
-
-# Convert a number to an array of numbers
-def numberToArr(n:int, base:int) -> list:
-    if n == 0: return [0]
-    digits = []
-    while n:
-        digits.append(n % base)
-        n //= base
-    return digits[::-1]
-
+# Convert from an array of base 64 to an integer
+def arr2int(arr:np.ndarray, base:int) -> int:
+    base_exp = int(math.log(base, 2))
+    arr = [conv(x, 2).zfill(base_exp) for x in arr]
+    arr = "".join(arr)
+    return int(arr, 2)
 
 # Convert from base 10 to base 4
 def quat(n:int) -> int:
