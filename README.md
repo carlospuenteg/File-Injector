@@ -281,7 +281,7 @@ The **injection** is done by **storing** the file in the **X less significant bi
 | `filename` | `bytes` | Filename as bytes |
 | `store_random` | `boolean` | Whether or not to store random data in the modified image/audio |
 
-returns the **modified image/audio array** (`np.ndarray`, with same shape as `arr`)
+Returns the **modified image/audio array** (`np.ndarray`, with same shape as `arr`)
 
 
 ### [`extract_file()`](utils/injection.py)
@@ -290,4 +290,4 @@ returns the **modified image/audio array** (`np.ndarray`, with same shape as `ar
 |-|-|-|
 | `mod_arr_flat` | `np.ndarray` | Flattened modified image/audio |
 
-returns a **dictionary** with the extracted **file** and **filename**, both in (`bytes`) format
+Returns a **dictionary** with the extracted **file** and **filename**, both in (`bytes`) format
