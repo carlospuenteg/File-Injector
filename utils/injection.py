@@ -67,10 +67,15 @@ def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -
     arr_flat[0] = store_bits(arr_flat[0], mod_bits, max_mod_bits_mask)
 
     # Generate random values
+    print(ctxt("\nGenerating random values...", Fore.MAGENTA))
     end_idx = 1 + len(file_size_conv) + len(filename_conv) + len(file_conv)
-    if store_random: rands = np.random.randint(low = 0, high=base, size=arr_flat.size - end_idx)
+    if store_random: 
+        rands = np.random.randint(low = 0, high=base, size=arr_flat.size - end_idx)
+    else:
+        rands = np.zeros(arr_flat.size - end_idx, dtype=arr.dtype)
 
-    # Use zip to inject values in channels, using base_mask
+    # Use zip to inject information in channels, using base_mask
+    print(ctxt("\nInjecting information...", Fore.MAGENTA))
     arr_flat[1:] = [
         store_bits(channel, val, base_mask) for channel, val in zip(
             arr_flat[1:],
