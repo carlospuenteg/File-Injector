@@ -108,7 +108,7 @@ This **1.7MP** image contains an **encrypted** **0.93MB** `.zip` file and its **
 <img src="readme-assets/1'7MP_mod.png" width=500>
 
 
-This **42MB** audio contains an **encrypted** **9MB** `.zip` file and its **filename** stored as noise.
+This **42MB** audio file contains an **encrypted** **9MB** `.zip` file and its **filename** stored as noise.
 
 https://user-images.githubusercontent.com/65092569/202014519-24514110-4bd2-4c2b-9307-237964df0c2b.mp4
 

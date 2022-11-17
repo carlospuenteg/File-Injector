@@ -41,8 +41,8 @@ def inject_file_func() -> None:
     # Get the inputs
     if TEST_MODE:
         file_path = f"{INPUT_PATH}/images.zip"
-        base_path = f"{BASE_AUDIOS_PATH}/winter-vivaldi.mp3"
-        # base_path = f"{BASE_IMAGES_PATH}/1'7MP.png"
+        # base_path = f"{BASE_AUDIOS_PATH}/winter-vivaldi.mp3"
+        base_path = f"{BASE_IMAGES_PATH}/1'7MP.png"
     else:
         file_path = get_path([INPUT_PATH], "File to be stored: ")
         base_path = get_path([BASE_IMAGES_PATH,BASE_AUDIOS_PATH], "Filename of the base file: ", [IMAGE_EXTS,AUDIO_EXTS])
@@ -98,8 +98,8 @@ def extract_file_func() -> None:
     #--------------------------------------
     # Get the inputs
     if TEST_MODE:
-        mod_file_path = f"{MOD_AUDIOS_PATH}/winter-vivaldi_mod.wav"
-        # mod_file_path = f"{MOD_IMAGES_PATH}/1'7MP_mod.png"
+        # mod_file_path = f"{MOD_AUDIOS_PATH}/winter-vivaldi_mod.wav"
+        mod_file_path = f"{MOD_IMAGES_PATH}/1'7MP_mod.png"
     else:
         mod_file_path = get_path([MOD_IMAGES_PATH, MOD_AUDIOS_PATH], "Filename of the modified file: ", [IMAGE_EXTS,AUDIO_EXTS])
     #--------------------------------------

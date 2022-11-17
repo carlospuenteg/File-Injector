@@ -6,4 +6,4 @@ MOD_SUFIX = "_mod"
 STORE_RANDOM = True
 
 # Enables/Disables Test Mode: Test with predefined images and files
-TEST_MODE = False
+TEST_MODE = True

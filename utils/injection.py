@@ -1,12 +1,12 @@
 import math
 
 import numpy as np
+import itertools as it
 
 from constants.constants import *
 from utils.bit_storing import store_bits, retrieve_bits
-from utils.conversor import conv, bin2Arr, arr2int, binLen2BaseLen
+from utils.conversor import conv, bin2Arr, arr2int
 from utils.ctxt import *
-from utils.progress_bar import progress_bar
 
 # Inyect a file and a filename into an array
 def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -> np.ndarray:
@@ -21,12 +21,12 @@ def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -
     arr_flat = arr.flatten()
     #-------------------------------------------------------
     # Get the maximum number of bits that can be modified in each channel and its base and mask
-    channel_bits = np.iinfo(arr_flat.dtype).bits
+    channel_bits = np.iinfo(arr.dtype).bits
     max_mod_bits_base = 2**channel_bits
     max_mod_bits_mask = max_mod_bits_base
     #-------------------------------------------------------
     # Maximum size the file can have
-    max_file_size = len(arr_flat) - MAX_FN_SIZE_BIN - 1
+    max_file_size = arr.size - MAX_FN_SIZE_BIN - 1
 
     # Length of max_file_size in base 2
     max_file_size_len = len(conv(max_file_size, 2))
@@ -47,48 +47,36 @@ def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -
 
     mod_bits = times                # The number of bits that will be modified
     base = 2**mod_bits              # The base that will be used to store the file
-    mask = max_mod_bits_base - base # The mask that will be used to store the file
+    base_mask = max_mod_bits_base - base # The mask that will be used to store the file
+    bin_mask = max_mod_bits_base - 2
     #-------------------------------------------------------
     # Convert the filename to base 2 and fill it left with 0s
-    filename_conv = filename_bin.zfill(MAX_FN_SIZE_BIN)
+    filename_conv = bin2Arr(filename_bin.zfill(MAX_FN_SIZE_BIN), 2)
 
     # Convert the file to base {base}
     file_conv = bin2Arr(file_bin, base)
 
     # Get the file size and convert it to base 2
     file_size = len(file_conv)
-    file_size_conv = conv(file_size, 2).zfill(max_file_size_len) # image resolution in pixels
+    file_size_conv = bin2Arr(conv(file_size, 2).zfill(max_file_size_len),2) # image resolution in pixels
     #-------------------------------------------------------
     print(f"Modified bits per channel: {ctxt(mod_bits, Fore.YELLOW)}")
-    print(f"Base file modification: {ctxt(f'{round(base/(2**channel_bits)*100, 2)}%', Fore.YELLOW)}\n")
+    print(f"Base file modification: {ctxt(f'{round(base/(2**channel_bits)*100, 2)}%', Fore.YELLOW)}")
     #-------------------------------------------------------
     # (1) Store mod_bits at idx 0
     arr_flat[0] = store_bits(arr_flat[0], mod_bits, max_mod_bits_mask)
-    idx = 1
 
-    # Store the file size in the next {max_file_size_len} pixels
-    for i,h in enumerate(file_size_conv):
-        arr_flat[idx+i] = store_bits(arr_flat[idx+i], int(h, 2), 256 - 2)
-    idx += len(file_size_conv)
+    # Generate random values
+    end_idx = 1 + len(file_size_conv) + len(filename_conv) + len(file_conv)
+    if store_random: rands = np.random.randint(low = 0, high=base, size=arr_flat.size - end_idx)
 
-    # Store the filename in the next {MAX_FN_SIZE_BIN} pixels
-    for i,h in enumerate(filename_conv):
-        arr_flat[idx+i] = store_bits(arr_flat[idx+i], int(h, 2), 256 - 2)
-    idx += len(filename_conv)
-
-    # Store the input file in the next {file_size} pixels
-    for i in range(len(file_conv)):
-        if i % 10000 == 0 or i == len(file_conv)-1:
-            progress_bar(i/(len(file_conv)-1), ctxt("Storing...", Fore.GREEN))
-        arr_flat[idx+i] = store_bits(arr_flat[idx+i], file_conv[i], mask)
-    idx += len(file_conv)
-    #-------------------------------------------------------
-    # Store random values in the rest of the pixels
-    if store_random:
-        print(ctxt("\nGenerating random values...", Fore.MAGENTA))
-        rands = list(np.random.randint(low = 0, high=base, size=len(arr_flat[idx:])))
-        print(ctxt("\nStoring random values...", Fore.MAGENTA))
-        arr_flat[idx:] = np.array([store_bits(x, rands[i], mask) for i,x in enumerate(arr_flat[idx:].tolist())])
+    # Use zip to inject values in channels, using base_mask
+    arr_flat[1:] = [
+        store_bits(channel, val, base_mask) for channel, val in zip(
+            arr_flat[1:],
+            np.concatenate((file_size_conv, filename_conv, file_conv, rands)),
+        )
+    ]
     #-------------------------------------------------------
     # Return flat_img to original shape if needed
     if arr.shape != arr_flat.shape:
