@@ -1,7 +1,6 @@
 import math
 
 import numpy as np
-import itertools as it
 
 from constants.constants import *
 from utils.bit_storing import store_bits, retrieve_bits
@@ -45,10 +44,9 @@ def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -
     # times must be between 1 and max_mod_bits (maximum modification of bits you can do to a channel)
     times = times if times <= channel_bits else channel_bits
 
-    mod_bits = times                # The number of bits that will be modified
-    base = 2**mod_bits              # The base that will be used to store the file
-    base_mask = max_mod_bits_base - base # The mask that will be used to store the file
-    bin_mask = max_mod_bits_base - 2
+    mod_bits = times                    # The number of bits that will be modified
+    base = 2**mod_bits                  # Base that will be used to store the information
+    mask = max_mod_bits_base - base     # Mask that will be used to store the information
     #-------------------------------------------------------
     # Convert the filename to base 2 and fill it left with 0s
     filename_conv = bin2Arr(filename_bin.zfill(MAX_FN_SIZE_BIN), 2)
@@ -58,7 +56,7 @@ def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -
 
     # Get the file size and convert it to base 2
     file_size = len(file_conv)
-    file_size_conv = bin2Arr(conv(file_size, 2).zfill(max_file_size_len),2) # image resolution in pixels
+    file_size_conv = bin2Arr(conv(file_size, 2).zfill(max_file_size_len),2)
     #-------------------------------------------------------
     print(f"Modified bits per channel: {ctxt(mod_bits, Fore.YELLOW)}")
     print(f"Base file modification: {ctxt(f'{round(base/(2**channel_bits)*100, 2)}%', Fore.YELLOW)}")
@@ -74,10 +72,10 @@ def inject_file(arr:np.ndarray, file:bytes, filename:bytes, store_random:bool) -
     else:
         rands = np.zeros(arr_flat.size - end_idx, dtype=arr.dtype)
 
-    # Use zip to inject information in channels, using base_mask
+    # Use zip to inject information in channels
     print(ctxt("\nInjecting information...", Fore.MAGENTA))
     arr_flat[1:] = [
-        store_bits(channel, val, base_mask) for channel, val in zip(
+        store_bits(channel, val, mask) for channel, val in zip(
             arr_flat[1:],
             np.concatenate((file_size_conv, filename_conv, file_conv, rands)),
         )

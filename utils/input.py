@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-import numpy as np
-
 from utils.ctxt import *
 
 def check_path(path:str) -> bool:
